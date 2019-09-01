@@ -1,6 +1,6 @@
 // file system module to perform file operations
 const fs = require("fs");
-const { formatBookMakerFeedData } = require("./utils/oddscheckerUtils");
+const { formatBookMakerFeedData } = require("./utils/dataFormatUtils");
 
 const startupTasks = () => {
   populateOddsChecker();
