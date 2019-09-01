@@ -32,6 +32,7 @@ const buildOddsCheckerEndpoint = () => {
   const {
     OddsCheckerRepository
   } = require("./repository/oddsCheckerRepository");
+  const httpSynonymService = require('./services/httpSynonymService');
   const { OddsCheckerService } = require("./services/oddsCheckerService");
   const {
     OddsCheckerController
@@ -40,6 +41,7 @@ const buildOddsCheckerEndpoint = () => {
   const oddsCheckerRepository = new OddsCheckerRepository(oddschecker);
   const oddsCheckerService = new OddsCheckerService(
     oddsCheckerRepository,
+    httpSynonymService,
     oddscheckerUtils
   );
   return new OddsCheckerController(oddsCheckerService, oddscheckerUtils);

@@ -18,9 +18,11 @@ class App {
         }
       });
     });
-   
+
     app.get("/api/events/:event_id", (req, res) =>
-      this.serve(res, this.oddsCheckerController.findEventsByIds(req.params.event_id))
+      this.oddsCheckerController
+        .findEventsByIds(req.params.event_id)
+        .then(data => this.serve(res, data))
     );
     // Error handling
     app.use((err, req, res, next) => {

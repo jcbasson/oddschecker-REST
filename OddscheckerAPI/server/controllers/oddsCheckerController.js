@@ -4,9 +4,9 @@ class OddsCheckerController {
     this.oddsCheckerUtils = oddsCheckerUtils;
   }
 
-  findEventsByIds(eventIds) {
+  async findEventsByIds(eventIds) {
     const eventIdList = this.oddsCheckerUtils.extractEventIdsFromParams(eventIds);
-    return this.oddsCheckerService.findEventsByIds(eventIdList);
+    return await this.oddsCheckerService.findEventsByIds(eventIdList);
   }
 
   static handleError(err) {
