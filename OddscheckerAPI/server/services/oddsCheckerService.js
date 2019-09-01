@@ -16,6 +16,16 @@ class OddsCheckerService {
     
     return updatedEvents;
   }
+
+  async findSubEventsByIds(subEventIds) {
+    const { oddsCheckerUtils, oddsCheckerRepository } = this;
+    const subEvents = oddsCheckerUtils.getSubEventsByIds(subEventIds, oddsCheckerRepository.oddschecker);
+    const synonyms = oddsCheckerUtils.extractSynonyms(subEvents, oddsCheckerUtils.subEventsSynonymAccumulator);
+    const synonymReplacements = await this.httpSynonymService.getSynonyms(synonyms);
+    const updatedSubEvents = oddsCheckerUtils.replaceSynonymsWithOddCheckerTerms(subEvents, synonymReplacements, oddsCheckerUtils.replaceSubEventSynonym);
+    
+    return updatedSubEvents;
+  }
 }
 
 module.exports = { OddsCheckerService };

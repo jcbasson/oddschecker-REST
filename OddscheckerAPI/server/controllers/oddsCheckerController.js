@@ -5,9 +5,13 @@ class OddsCheckerController {
   }
 
   async findEventsByIds(eventIds) {
-    const eventIdList = this.oddsCheckerUtils.extractEventIdsFromParams(eventIds);
-    console.log("eventIdList = ", eventIdList);
+    const eventIdList = this.oddsCheckerUtils.extractIdsFromParams(eventIds);
     return await this.oddsCheckerService.findEventsByIds(eventIdList);
+  }
+
+  async findSubEventsByIds(subEventIds) {
+    const subEventIdList = this.oddsCheckerUtils.extractIdsFromParams(subEventIds);
+    return await this.oddsCheckerService.findSubEventsByIds(subEventIdList);
   }
 
   static handleError(err) {

@@ -24,6 +24,13 @@ class App {
         .findEventsByIds(req.params.event_id)
         .then(data => this.serve(res, data))
     );
+
+    app.get("/api/subevents/:subevent_id", (req, res) =>
+    this.oddsCheckerController
+      .findSubEventsByIds(req.params.subevent_id)
+      .then(data => this.serve(res, data))
+  );
+
     // Error handling
     app.use((err, req, res, next) => {
       console.log("err = ", err);

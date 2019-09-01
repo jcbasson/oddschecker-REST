@@ -5,8 +5,17 @@ const getEventsByIds = (eventIds, oddsCheckerData) => {
   return events.filter(event => eventIds.includes(_.get(event, "eventId")));
 };
 
-const extractEventIdsFromParams = eventIds =>
-  _.uniq(eventIds.split(",").map(e => parseInt(e, 10)));
+const getSubEventsByIds = (subEventIds, oddsCheckerData) => {
+  const events = _.get(oddsCheckerData, "events", []);
+
+  return events.reduce((accumulatedSubEvents, event) => {
+    const subEvents = _.get(event, 'subevents', []).filter(se => subEventIds.includes(_.get(se, "subeventId")))
+    return [...accumulatedSubEvents,...subEvents];
+  }, [])
+}
+
+const extractIdsFromParams = idParams =>
+  _.uniq(idParams.split(",").map(e => parseInt(e, 10)));
 
 const extractSynonyms = (items, accumulator) => {
   return items.reduce(accumulator, []);
@@ -123,9 +132,12 @@ const buildTermWithOddsCheckerTerms = (term, oddsCheckerTerms) => {
 
 module.exports = {
   getEventsByIds,
+  getSubEventsByIds,
   extractSynonyms,
   eventSynonymsAccumulator,
-  extractEventIdsFromParams,
+  subEventsSynonymAccumulator,
+  extractIdsFromParams,
   replaceSynonymsWithOddCheckerTerms,
-  replaceEventSynonym
+  replaceEventSynonym,
+  replaceSubEventSynonym
 };
