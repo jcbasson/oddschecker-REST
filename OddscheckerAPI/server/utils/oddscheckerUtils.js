@@ -6,7 +6,7 @@ const formatBookMakerFeedData = bookMakerFeed => {
 
   return {
     categoryName: _.get(bookMakerFeed, "sport"),
-    categoryId: 1, //TODO: Create ID generator
+    categoryId: 1,
     events: _.get(bookMakerFeed, "competitions", []).map(
       generateEvent(makeEventId, makeSubEventId)
     )
@@ -14,7 +14,6 @@ const formatBookMakerFeedData = bookMakerFeed => {
 };
 
 const generateEvent = (makeEventId, makeSubEventId) => competition => {
-  
   return {
     eventId: makeEventId(),
     eventName: _.get(competition, "name", ""),
@@ -51,14 +50,65 @@ const generateBet = outcome => {
 const eventIdGenerator = () => {
   let eventId = 0;
 
-  return () => eventId++;
+  return () => ++eventId;
 };
 
 const subEventIdGenerator = () => {
   let subeventId = 0;
-  return () => subeventId++;
+  return () => ++subeventId;
+};
+
+const getEventsByIds = (eventIds, oddsCheckerData) => {
+  const events = _.get(oddsCheckerData, "events", []);
+  return eventIds.map(getEventById(events));
+};
+
+const getEventById = events => eventId => {
+  return events.find(e => _.get(e, "eventId") === eventId)
+};
+
+const extractEventIdsFromParams = (eventIds) => _.uniq(eventIds.split(',').map(e => parseInt(e, 10)));
+
+const extractSynonyms = (items, accumulator) => {
+  return items.reduce(accumulator, []);
+};
+
+const eventSynonymsAccumulator = (synonymsAccumulator, event) => {
+  const synonym = _.get(event, "eventName");
+  const otherSynonyms = extractSynonyms(
+    _.get(event, "subevents", []),
+    subEventsSynonymAccumulator
+  );
+  return [...synonymsAccumulator, synonym, ...otherSynonyms];
+};
+
+const subEventsSynonymAccumulator = (synonymsAccumulator, subEvent) => {
+  const synonym = _.get(subEvent, "subeventName");
+  const otherSynonyms = extractSynonyms(
+    _.get(subEvent, "markets", []),
+    marketNameSynonymAccumulator
+  );
+  return [...synonymsAccumulator, synonym, ...otherSynonyms];
+};
+
+const marketNameSynonymAccumulator = (synonymsAccumulator, market) => {
+  const synonym = _.get(market, "marketName");
+  const otherSynonyms = extractSynonyms(
+    _.get(market, "bets", []),
+    betsSynonymAccumulator
+  );
+  return [...synonymsAccumulator, synonym, ...otherSynonyms];
+};
+
+const betsSynonymAccumulator = (synonymsAccumulator, bet) => {
+  const synonym = _.get(bet, "betName");
+  return [...synonymsAccumulator, synonym];
 };
 
 module.exports = {
-  formatBookMakerFeedData
+  formatBookMakerFeedData,
+  getEventsByIds,
+  extractSynonyms,
+  eventSynonymsAccumulator,
+  extractEventIdsFromParams
 };

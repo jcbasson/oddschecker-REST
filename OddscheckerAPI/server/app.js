@@ -1,7 +1,7 @@
 class App {
-  constructor(nodeModules, startupTasks, synonymsController) {
+  constructor(nodeModules, startupTasks, oddsCheckerController) {
     this.nodeModules = nodeModules;
-    this.synonymsController = synonymsController;
+    this.oddsCheckerController = oddsCheckerController;
     this.server = null;
     this.startupTasks = startupTasks;
   }
@@ -18,17 +18,15 @@ class App {
         }
       });
     });
-    app.get("/synonyms", (req, res) =>
-      this.serve(res, this.synonymsController.findAll())
-    );
-    app.get("/synonyms/:synonym", (req, res) =>
-      this.serve(res, this.synonymsController.findBySynonym(req.params.synonym))
+   
+    app.get("/api/events/:event_id", (req, res) =>
+      this.serve(res, this.oddsCheckerController.findEventsByIds(req.params.event_id))
     );
     // Error handling
     app.use((err, req, res, next) => {
       console.log("err = ", err);
       if (err) {
-        this.serveError(res, this.synonymsController.handleError(err));
+        this.serveError(res, this.oddsCheckerController.handleError(err));
         return;
       }
 

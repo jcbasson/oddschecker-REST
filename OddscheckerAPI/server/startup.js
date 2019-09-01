@@ -1,6 +1,6 @@
 // file system module to perform file operations
 const fs = require("fs");
-const { formatBookMakerFeedData } = require('./utils/oddscheckerUtils')
+const { formatBookMakerFeedData } = require("./utils/oddscheckerUtils");
 
 const startupTasks = () => {
   populateOddsChecker();
@@ -15,7 +15,7 @@ const populateOddsChecker = () => {
     `${__dirname}/repository/data/oddschecker.json`,
     jsonContent,
     "utf8",
-    (err) => {
+    err => {
       if (err) {
         console.log("An error occured while writing JSON Object to File.");
         return console.log(err);
@@ -26,22 +26,26 @@ const populateOddsChecker = () => {
   );
 };
 
-const buildSynonymsEndpoint = () => {
-  const synonyms = require("./repository/data/synonyms");
-  const synonymsUtils = require("./utils/synonymsUtils");
-  const { SynonymsRepository } = require("./repository/synonymsRepository");
-  const { SynonymsService } = require("./services/synonymsService");
-  const { SynonymsController } = require("./controllers/synonymsController");
+const buildOddsCheckerEndpoint = () => {
+  const oddschecker = require("./repository/data/oddschecker");
+  const oddscheckerUtils = require("./utils/oddscheckerUtils");
+  const {
+    OddsCheckerRepository
+  } = require("./repository/oddsCheckerRepository");
+  const { OddsCheckerService } = require("./services/oddsCheckerService");
+  const {
+    OddsCheckerController
+  } = require("./controllers/oddsCheckerController");
 
-  const synonymsRepository = new SynonymsRepository(synonyms);
-  const synonymsService = new SynonymsService(
-    synonymsRepository,
-    synonymsUtils
+  const oddsCheckerRepository = new OddsCheckerRepository(oddschecker);
+  const oddsCheckerService = new OddsCheckerService(
+    oddsCheckerRepository,
+    oddscheckerUtils
   );
-  return new SynonymsController(synonymsService);
+  return new OddsCheckerController(oddsCheckerService, oddscheckerUtils);
 };
 
 module.exports = {
-  buildSynonymsEndpoint,
+  buildOddsCheckerEndpoint,
   startupTasks
 };
