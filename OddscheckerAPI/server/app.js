@@ -25,10 +25,16 @@ class App {
     );
 
     app.get("/api/subevents/:subevent_id", (req, res) =>
-    this.oddsCheckerController
-      .findSubEventsByIds(req.params.subevent_id)
-      .then(data => this.serve(res, data))
-  );
+      this.oddsCheckerController
+        .findSubEventsByIds(req.params.subevent_id)
+        .then(data => this.serve(res, data))
+    );
+
+    app.get("/api/markets/:market_id", (req, res) =>
+      this.oddsCheckerController
+        .findMarketsByIds(req.params.market_id)
+        .then(data => this.serve(res, data))
+    );
 
     // Error handling
     app.use((err, req, res, next) => {

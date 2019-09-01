@@ -14,6 +14,11 @@ class OddsCheckerController {
     return await this.oddsCheckerService.findSubEventsByIds(subEventIdList);
   }
 
+  async findMarketsByIds(marketIds) {
+    const marketIdList = this.oddsCheckerUtils.extractIdsFromParams(marketIds);
+    return await this.oddsCheckerService.findMarketsByIds(marketIdList);
+  }
+
   static handleError(err) {
     let status;
     switch (err.type) {

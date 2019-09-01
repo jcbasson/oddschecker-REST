@@ -26,6 +26,16 @@ class OddsCheckerService {
     
     return updatedSubEvents;
   }
+
+  async findMarketsByIds(marketIds) {
+    const { oddsCheckerUtils, oddsCheckerRepository } = this;
+    const markets = oddsCheckerUtils.getMarketsByIds(marketIds, oddsCheckerRepository.oddschecker);
+    const synonyms = oddsCheckerUtils.extractSynonyms(markets, oddsCheckerUtils.marketNameSynonymAccumulator);
+    const synonymReplacements = await this.httpSynonymService.getSynonyms(synonyms);
+    const updatedMarkets = oddsCheckerUtils.replaceSynonymsWithOddCheckerTerms(markets, synonymReplacements, oddsCheckerUtils.replaceMarketSynonym);
+    
+    return updatedMarkets;
+  }
 }
 
 module.exports = { OddsCheckerService };
