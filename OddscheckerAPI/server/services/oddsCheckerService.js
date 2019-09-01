@@ -13,7 +13,7 @@ class OddsCheckerService {
     const synonyms = oddsCheckerUtils.extractSynonyms(events, oddsCheckerUtils.eventSynonymsAccumulator);
     const synonymReplacements = await this.httpSynonymService.getSynonyms(synonyms);
     const updatedEvents = oddsCheckerUtils.replaceSynonymsWithOddCheckerTerms(events, synonymReplacements, oddsCheckerUtils.replaceEventSynonym);
-    
+   
     return updatedEvents;
   }
 

@@ -2,6 +2,7 @@ const _ = require("lodash");
 
 const getEventsByIds = (eventIds, oddsCheckerData) => {
   const events = _.get(oddsCheckerData, "events", []);
+  
   return events.filter(event => eventIds.includes(_.get(event, "eventId")));
 };
 

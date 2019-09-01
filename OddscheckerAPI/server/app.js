@@ -1,9 +1,8 @@
 class App {
-  constructor(nodeModules, startupTasks, oddsCheckerController) {
+  constructor(nodeModules, oddsCheckerController) {
     this.nodeModules = nodeModules;
     this.oddsCheckerController = oddsCheckerController;
     this.server = null;
-    this.startupTasks = startupTasks;
   }
 
   init(port) {
@@ -43,7 +42,6 @@ class App {
     });
 
     this.server = app.listen(port, () => {
-      this.startupTasks();
       console.log(`server running on port ${port}`);
     });
   }

@@ -5,8 +5,8 @@ const { App } = require("./app");
 const { startupTasks, buildOddsCheckerEndpoint } = require('./startup');
 
 const nodeModules = { express, cors, qs };
-
-const server = new App(nodeModules, startupTasks, buildOddsCheckerEndpoint());
+startupTasks();
+const server = new App(nodeModules, buildOddsCheckerEndpoint());
 server.init(8766);
 
 

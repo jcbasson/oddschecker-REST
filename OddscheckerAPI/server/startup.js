@@ -3,36 +3,42 @@ const fs = require("fs");
 const { formatBookMakerFeedData } = require("./utils/dataFormatUtils");
 
 const startupTasks = () => {
-  populateOddsChecker();
+  populateOddsCheckerData();
 };
 
-const populateOddsChecker = () => {
+const populateOddsCheckerData = () => {
   const bookMakerFeed = require("./repository/data/bookmaker-feed");
   const oddCheckerData = formatBookMakerFeedData(bookMakerFeed);
   const jsonContent = JSON.stringify(oddCheckerData);
 
-  fs.writeFile(
-    `${__dirname}/repository/data/oddschecker.json`,
-    jsonContent,
-    "utf8",
-    err => {
-      if (err) {
-        console.log("An error occured while writing JSON Object to File.");
-        return console.log(err);
-      }
+  try {
+    fs.writeFileSync(
+      `${__dirname}/repository/data/oddschecker.json`,
+      jsonContent
+    );
+  } catch (err) {
+    console.error(err);
+  }
+};
 
-      console.log("OddsChecker data has been populated");
-    }
-  );
+const getOddsCheckerData = () => {
+  try {
+    return JSON.parse(
+      fs.readFileSync(`${__dirname}/repository/data/oddschecker.json`, "utf8")
+    );
+  } catch (err) {
+    console.error(err);
+    return false;
+  }
 };
 
 const buildOddsCheckerEndpoint = () => {
-  const oddschecker = require("./repository/data/oddschecker");
+  const oddschecker = getOddsCheckerData();
   const oddscheckerUtils = require("./utils/oddscheckerUtils");
   const {
     OddsCheckerRepository
   } = require("./repository/oddsCheckerRepository");
-  const httpSynonymService = require('./services/httpSynonymService');
+  const httpSynonymService = require("./services/httpSynonymService");
   const { OddsCheckerService } = require("./services/oddsCheckerService");
   const {
     OddsCheckerController
