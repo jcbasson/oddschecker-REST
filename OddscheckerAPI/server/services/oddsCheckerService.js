@@ -15,8 +15,9 @@ class OddsCheckerService {
     console.log("synonyms= ", synonyms);
     const synonymReplacements = await this.httpSynonymService.getSynonyms(synonyms);
     console.log(synonymReplacements);
-    const updatedEvents = oddsCheckerUtils.replaceSynonymsWithOddCheckerTerms(events, synonymReplacements);
+    const updatedEvents = oddsCheckerUtils.replaceSynonymsWithOddCheckerTerms(events, synonymReplacements, oddsCheckerUtils.replaceEventSynonym);
     console.log("updatedEvents = ", updatedEvents);
+    return updatedEvents;
   }
 }
 

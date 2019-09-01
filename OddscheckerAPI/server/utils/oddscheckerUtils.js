@@ -1,4 +1,4 @@
-const _ = require('lodash');
+const _ = require("lodash");
 
 const getEventsByIds = (eventIds, oddsCheckerData) => {
   const events = _.get(oddsCheckerData, "events", []);
@@ -6,10 +6,11 @@ const getEventsByIds = (eventIds, oddsCheckerData) => {
 };
 
 const getEventById = events => eventId => {
-  return events.find(e => _.get(e, "eventId") === eventId)
+  return events.find(e => _.get(e, "eventId") === eventId);
 };
 
-const extractEventIdsFromParams = (eventIds) => _.uniq(eventIds.split(',').map(e => parseInt(e, 10)));
+const extractEventIdsFromParams = eventIds =>
+  _.uniq(eventIds.split(",").map(e => parseInt(e, 10)));
 
 const extractSynonyms = (items, accumulator) => {
   return items.reduce(accumulator, []);
@@ -47,35 +48,61 @@ const betsSynonymAccumulator = (synonymsAccumulator, bet) => {
   return [...synonymsAccumulator, synonym];
 };
 
-const getOddCheckerTermsForTerm = (term, synonymReplacements) => {
-  return synonymReplacements.filter(d => term.includes(_.get(d,'synonym')))
-}
+const replaceSynonymsWithOddCheckerTerms = (
+  data,
+  synonymReplacements,
+  replaceFn
+) => {
+  return data.map(replaceFn(synonymReplacements));
+};
 
-const replaceSynonymsWithOddCheckerTerms = (events, synonymReplacements) => {
-  return events.map(replaceEventSynonym(synonymReplacements));
-}
-
-const replaceEventSynonym = (synonymReplacements) => event => {
+const replaceEventSynonym = synonymReplacements => event => {
   const eventName = _.get(event, "eventName");
-  const oddsCheckerEventName = buildTermWithOddsCheckerTerms(eventName, synonymReplacements);
-  console.log(oddsCheckerEventName)
+  const subEvents = _.get(event, "subevents", []);
+  const oddsCheckerEventName = buildTermWithOddsCheckerTerms(
+    eventName,
+    synonymReplacements
+  );
   return {
     ...event,
-    eventName: oddsCheckerEventName
-  }
-}
+    eventName: oddsCheckerEventName,
+    subevents: replaceSynonymsWithOddCheckerTerms(
+      subEvents,
+      synonymReplacements,
+      replaceSubEventSynonym
+    )
+  };
+};
+
+const replaceSubEventSynonym = synonymReplacements => subEvent => {
+  const subEventName = _.get(subEvent, "subeventName");
+  const oddsCheckerSubEventName = buildTermWithOddsCheckerTerms(
+    subEventName,
+    synonymReplacements
+  );
+
+  return {
+    ...subEvent,
+    subeventName: oddsCheckerSubEventName
+  };
+};
 
 const buildTermWithOddsCheckerTerms = (term, oddsCheckerTerms) => {
   return oddsCheckerTerms.reduce((builtTerm, oddsCheckerTerm) => {
-
-    return builtTerm.replace(oddsCheckerTerm.synonym, oddsCheckerTerm.oddsCheckerTerm)
-  }, term)
-}
+    return _.isEmpty(oddsCheckerTerm.oddsCheckerTerm)
+      ? builtTerm
+      : builtTerm.replace(
+          oddsCheckerTerm.synonym,
+          oddsCheckerTerm.oddsCheckerTerm
+        );
+  }, term);
+};
 
 module.exports = {
   getEventsByIds,
   extractSynonyms,
   eventSynonymsAccumulator,
   extractEventIdsFromParams,
-  replaceSynonymsWithOddCheckerTerms
+  replaceSynonymsWithOddCheckerTerms,
+  replaceEventSynonym
 };
