@@ -2,11 +2,7 @@ const _ = require("lodash");
 
 const getEventsByIds = (eventIds, oddsCheckerData) => {
   const events = _.get(oddsCheckerData, "events", []);
-  return eventIds.map(getEventById(events));
-};
-
-const getEventById = events => eventId => {
-  return events.find(e => _.get(e, "eventId") === eventId);
+  return events.filter(event => eventIds.includes(_.get(event, "eventId")));
 };
 
 const extractEventIdsFromParams = eventIds =>
@@ -76,6 +72,7 @@ const replaceEventSynonym = synonymReplacements => event => {
 
 const replaceSubEventSynonym = synonymReplacements => subEvent => {
   const subEventName = _.get(subEvent, "subeventName");
+  const markets = _.get(subEvent, "markets", []);
   const oddsCheckerSubEventName = buildTermWithOddsCheckerTerms(
     subEventName,
     synonymReplacements
@@ -83,9 +80,35 @@ const replaceSubEventSynonym = synonymReplacements => subEvent => {
 
   return {
     ...subEvent,
-    subeventName: oddsCheckerSubEventName
+    subeventName: oddsCheckerSubEventName,
+    markets: replaceSynonymsWithOddCheckerTerms(markets, synonymReplacements, replaceMarketSynonym)
   };
 };
+
+const replaceMarketSynonym = synonymReplacements => market => {
+  const marketName = _.get(market, "marketName");
+  const bets = _.get(market, "bets", []);
+  const oddsCheckerMarketName = buildTermWithOddsCheckerTerms(
+    marketName,
+    synonymReplacements
+  );
+
+  return {
+    ...market,
+    marketName: oddsCheckerMarketName,
+    bets: replaceSynonymsWithOddCheckerTerms(bets, synonymReplacements, replaceBetSynonym)
+  }
+}
+
+const replaceBetSynonym = synonymReplacements => bet => {
+  const betName = _.get(bet, "betName");
+  const oddsCheckerBetName = buildTermWithOddsCheckerTerms(betName, synonymReplacements);
+  
+  return {
+    ...bet,
+    betName:oddsCheckerBetName
+  }
+}
 
 const buildTermWithOddsCheckerTerms = (term, oddsCheckerTerms) => {
   return oddsCheckerTerms.reduce((builtTerm, oddsCheckerTerm) => {

@@ -10,13 +10,10 @@ class OddsCheckerService {
   async findEventsByIds(eventIds) {
     const { oddsCheckerUtils, oddsCheckerRepository } = this;
     const events = oddsCheckerUtils.getEventsByIds(eventIds, oddsCheckerRepository.oddschecker);
-    console.log("events = ", events);
     const synonyms = oddsCheckerUtils.extractSynonyms(events, oddsCheckerUtils.eventSynonymsAccumulator);
-    console.log("synonyms= ", synonyms);
     const synonymReplacements = await this.httpSynonymService.getSynonyms(synonyms);
-    console.log(synonymReplacements);
     const updatedEvents = oddsCheckerUtils.replaceSynonymsWithOddCheckerTerms(events, synonymReplacements, oddsCheckerUtils.replaceEventSynonym);
-    console.log("updatedEvents = ", updatedEvents);
+    
     return updatedEvents;
   }
 }

@@ -6,6 +6,7 @@ class OddsCheckerController {
 
   async findEventsByIds(eventIds) {
     const eventIdList = this.oddsCheckerUtils.extractEventIdsFromParams(eventIds);
+    console.log("eventIdList = ", eventIdList);
     return await this.oddsCheckerService.findEventsByIds(eventIdList);
   }
 
