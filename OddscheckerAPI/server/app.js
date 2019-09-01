@@ -36,6 +36,12 @@ class App {
         .then(data => this.serve(res, data))
     );
 
+    app.get("/api/bets/:bet_id", (req, res) =>
+      this.oddsCheckerController
+        .findBetsByIds(req.params.bet_id)
+        .then(data => this.serve(res, data))
+    );
+
     // Error handling
     app.use((err, req, res, next) => {
       console.log("err = ", err);

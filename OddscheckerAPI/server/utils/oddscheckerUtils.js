@@ -26,12 +26,37 @@ const getMarketsByIds = (markedIds, oddsCheckerData) => {
         const markets = _.get(subEvent, "markets", []).filter(m =>
           markedIds.includes(_.get(m, "marketId"))
         );
-       
+
         return [...accumulatedMarkets, ...markets];
       },
       []
     );
     return [...accumulatedMarkets, ...markets];
+  }, []);
+};
+
+const getBetsByIds = (betIds, oddsCheckerData) => {
+  const events = _.get(oddsCheckerData, "events", []);
+
+  return events.reduce((accumulatedBets, event) => {
+    const bets = _.get(event, "subevents", []).reduce(
+      (accumulatedBets, subEvent) => {
+        const bets = _.get(subEvent, "markets", []).reduce(
+          (accumulatedBets, market) => {
+            const bets = _.get(market, "bets", []).filter(b =>
+              betIds.includes(_.get(b, "betId"))
+            );
+
+            return [...accumulatedBets, ...bets];
+          },
+          []
+        );
+
+        return [...accumulatedBets, ...bets];
+      },
+      []
+    );
+    return [...accumulatedBets, ...bets];
   }, []);
 };
 
@@ -166,13 +191,16 @@ module.exports = {
   getEventsByIds,
   getSubEventsByIds,
   getMarketsByIds,
+  getBetsByIds,
   extractSynonyms,
   eventSynonymsAccumulator,
   subEventsSynonymAccumulator,
   marketNameSynonymAccumulator,
+  betsSynonymAccumulator,
   extractIdsFromParams,
   replaceSynonymsWithOddCheckerTerms,
   replaceEventSynonym,
   replaceSubEventSynonym,
-  replaceMarketSynonym
+  replaceMarketSynonym,
+  replaceBetSynonym
 };
